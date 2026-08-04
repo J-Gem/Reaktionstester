@@ -43,9 +43,9 @@ void Reactionstester::displayNachricht(const String zeile1, const String zeile2)
 
 void Reactionstester::lowPowerModus()
 {
-    attachInterrupt(digitalPinToInterrupt(2), wakeUp, LOW);
+    attachInterrupt(digitalPinToInterrupt(this->btnPin1), wakeUp, LOW);
     LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
-    detachInterrupt(digitalPinToInterrupt(2));
+    detachInterrupt(digitalPinToInterrupt(this->btnPin1));
 }
 
 
@@ -61,7 +61,7 @@ int Reactionstester::ReaktionstestVorbereiten() // Bereitet den Reactionstest vo
 }
 
 
-int Reactionstester::Reaktionstest()
+int Reactionstester::Reaktionstest()  // Wartet eine zufällige Zeit und startet dann Reaktionstest, nach btn druck wird reaktionszeit gemessen
 {
     this->displayNachricht("                ", "                ");
     delay(random(1000, 5000));
