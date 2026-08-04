@@ -21,6 +21,7 @@ public:
     int Reaktionstest();
     int warteAufBTN();
     void displayNachricht(const String zeile1, const String zeile2);
+    void lowPowerModus();
 };
 
 #endif

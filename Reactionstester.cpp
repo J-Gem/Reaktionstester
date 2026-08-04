@@ -41,6 +41,14 @@ void Reactionstester::displayNachricht(const String zeile1, const String zeile2)
     this->lcd.print(zeile2);
 }
 
+void Reactionstester::lowPowerModus()
+{
+    attachInterrupt(digitalPinToInterrupt(2), wakeUp, LOW);
+    LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
+    detachInterrupt(digitalPinToInterrupt(2));
+}
+
+
 int Reactionstester::ReaktionstestVorbereiten() // Bereitet den Reactionstest vor und wartert anschließend im LowPower Modus auf eine eingabe
 {
     this->lcd.init();
@@ -48,14 +56,12 @@ int Reactionstester::ReaktionstestVorbereiten() // Bereitet den Reactionstest vo
     this->displayNachricht("Reactionstest", "Starten!");
     digitalWrite(this->ledPin1, LOW);
 
-    // Low Power Mode
-    attachInterrupt(digitalPinToInterrupt(2), wakeUp, LOW);
-    LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
-    detachInterrupt(digitalPinToInterrupt(2));
+    this->lowPowerModus();
 
     if (warteAufBTN() == 1)
         return 1;
 }
+
 
 int Reactionstester::Reaktionstest()
 {
