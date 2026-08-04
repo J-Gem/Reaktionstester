@@ -19,7 +19,7 @@ public:
     Reactionstester(int, int, int, int); // Konstruktor
     int ReaktionstestVorbereiten();
     int Reaktionstest();
-    bool btnAbfrage();
+    int warteAufBTN();
     void displayNachricht(const String zeile1, const String zeile2);
 };
 
