@@ -29,14 +29,20 @@ bool Reactionstester::btnAbfrage()
     return true;
 }
 
+void Reactionstester::displayNachricht(const String zeile1, const String zeile2)
+{
+    this->lcd.clear();
+    this->lcd.setCursor(0,0);
+    this->lcd.print(zeile1);
+    this->lcd.setCursor(0,1);
+    this->lcd.print(zeile2);
+}
+
 int Reactionstester::ReaktionstestVorbereiten() // Bereitet den Reactionstest vor und wartert anschließend im LowPower Modus auf eine eingabe
 {
     this->lcd.init();
     this->lcd.backlight();
-    this->lcd.setCursor(0, 0);
-    this->lcd.print("Reactionstest");
-    this->lcd.setCursor(0, 1);
-    this->lcd.print("Starten!");
+    this->displayNachricht("Reactionstest","Starten!");
     digitalWrite(this->ledPin1, LOW);
 
     //Low Power Mode
@@ -51,8 +57,7 @@ int Reactionstester::ReaktionstestVorbereiten() // Bereitet den Reactionstest vo
 int Reactionstester::Reaktionstest()
 {
     // Zeigt auf dem Display die Eingabe an
-    this->lcd.setCursor(0, 0);
-    this->lcd.print("-------------");
+    this->displayNachricht("                ","                ");
 
     // Wartet zwischen 1 bis 5 Sekunden bis der Test startet
     delay(random(1000, 5000));
@@ -60,20 +65,13 @@ int Reactionstester::Reaktionstest()
     // startzeit wird ermittelt, lampe und Display werden angesteuert
     digitalWrite(this->ledPin1, HIGH);
     this->zeit = millis();
-    this->lcd.setCursor(0, 0);
-    this->lcd.print("Jetzt!!!        ");
-    this->lcd.setCursor(0, 1);
-    this->lcd.print("                ");
-    
-
+    this->displayNachricht("Jetzt!!!        ","                ");
     if (btnAbfrage())
     {
         // endzeit wird gemessen und von der startzeit abgezoggen, lampe wird ausgeschaltet und Display wird aktualisiert
         this->reactionszeit = millis();
         digitalWrite(this->ledPin1, LOW);
-        this->lcd.setCursor(0, 0);
-        this->lcd.print("        ");
-        this->lcd.print(reactionszeit - zeit);
+        this->displayNachricht(String(reactionszeit-zeit) + " ms","                ");
         delay(3000);
         return 1;
     }

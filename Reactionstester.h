@@ -20,6 +20,7 @@ public:
     int ReaktionstestVorbereiten();
     int Reaktionstest();
     bool btnAbfrage();
+    void displayNachricht(const String zeile1, const String zeile2);
 };
 
 #endif
