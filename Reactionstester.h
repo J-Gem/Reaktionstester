@@ -16,7 +16,7 @@ private:
     LiquidCrystal_I2C lcd;
 
 public:
-    Reactionstester(int, int, int, int); // Konstruktor
+    Reactionstester(int ledPin1, int ledPin2, int btn1, int btn2);
     int ReaktionstestVorbereiten();
     int Reaktionstest();
     int warteAufBTN();

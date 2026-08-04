@@ -24,7 +24,7 @@ void wakeUp()
 
 int Reactionstester::warteAufBTN()
 {
-    while (digitalRead(this->btnPin1) != LOW || digitalRead(this->btnPin2) != LOW)
+    while (digitalRead(this->btnPin1) != LOW && digitalRead(this->btnPin2) != LOW)
     {
     }
     if (digitalRead(this->btnPin1) == LOW)
@@ -45,8 +45,10 @@ void Reactionstester::displayNachricht(const String zeile1, const String zeile2)
 void Reactionstester::lowPowerModus()
 {
     attachInterrupt(digitalPinToInterrupt(this->btnPin1), wakeUp, LOW);
+    attachInterrupt(digitalPinToInterrupt(this->btnPin2), wakeUp, LOW);
     LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
     detachInterrupt(digitalPinToInterrupt(this->btnPin1));
+    detachInterrupt(digitalPinToInterrupt(this->btnPin2));
 }
 
 bool Reactionstester::speichern(int besterwert)
@@ -69,12 +71,17 @@ bool Reactionstester::besterWert(int neuerWert)
     if (besterwert == 0 || besterwert > neuerWert)
     {
         return true;
-    }else
+    }
+    else
     {
         return false;
     }
 }
 
+bool Reactionstester::loeschen()
+{
+    this->speichern(0);
+}
 
 int Reactionstester::ReaktionstestVorbereiten() // Bereitet den Reactionstest vor und wartert anschließend im LowPower Modus auf eine eingabe
 {
@@ -83,8 +90,21 @@ int Reactionstester::ReaktionstestVorbereiten() // Bereitet den Reactionstest vo
     this->displayNachricht("Reactionstest", "Starten!");
     digitalWrite(this->ledPin1, LOW);
     this->lowPowerModus();
-    if (warteAufBTN() == 1)
+    switch (warteAufBTN())
+    {
+    case 1:
         return 1;
+        break;
+
+    case 2:
+        this->loeschen();
+        this->displayNachricht("Loesche     ", "Bestenwert");
+        delay(500);
+        this->ReaktionstestVorbereiten();
+        break;
+    default:
+        this->ReaktionstestVorbereiten();
+    }
 }
 
 int Reactionstester::Reaktionstest() // Wartet eine zufällige Zeit und startet dann Reaktionstest, nach btn druck wird reaktionszeit gemessen
