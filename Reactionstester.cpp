@@ -3,6 +3,7 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 #include <LowPower.h>
+#include <EEPROM.h>
 
 Reactionstester::Reactionstester(int ledPin1, int ledPin2, int btnPin1, int btnPin2) // Konstruktor
     : ledPin1(ledPin1),
@@ -48,6 +49,32 @@ void Reactionstester::lowPowerModus()
     detachInterrupt(digitalPinToInterrupt(this->btnPin1));
 }
 
+bool Reactionstester::speichern(int besterwert)
+{
+    EEPROM.put(0, besterwert);
+    return true;
+}
+
+int Reactionstester::Lesen()
+{
+    int besterwert = 0;
+    EEPROM.get(0, besterwert);
+    return besterwert;
+}
+
+bool Reactionstester::besterWert(int neuerWert)
+{
+    int besterwert = 0;
+    EEPROM.get(0, besterwert);
+    if (besterwert == 0 || besterwert > neuerWert)
+    {
+        return true;
+    }else
+    {
+        return false;
+    }
+}
+
 
 int Reactionstester::ReaktionstestVorbereiten() // Bereitet den Reactionstest vor und wartert anschließend im LowPower Modus auf eine eingabe
 {
@@ -60,8 +87,7 @@ int Reactionstester::ReaktionstestVorbereiten() // Bereitet den Reactionstest vo
         return 1;
 }
 
-
-int Reactionstester::Reaktionstest()  // Wartet eine zufällige Zeit und startet dann Reaktionstest, nach btn druck wird reaktionszeit gemessen
+int Reactionstester::Reaktionstest() // Wartet eine zufällige Zeit und startet dann Reaktionstest, nach btn druck wird reaktionszeit gemessen
 {
     this->displayNachricht("                ", "                ");
     delay(random(1000, 5000));
@@ -74,7 +100,13 @@ int Reactionstester::Reaktionstest()  // Wartet eine zufällige Zeit und startet
         this->reactionszeit = millis();
         digitalWrite(this->ledPin1, LOW);
         this->displayNachricht(String(reactionszeit - zeit) + " ms", "                ");
-        delay(3000);
+        if (this->besterWert(reactionszeit - zeit) == true)
+        {
+            this->speichern(reactionszeit - zeit);
+        }
+        delay(2000);
+        this->displayNachricht("Besterwert    ", String(this->Lesen()) + " ms");
+        delay(2000);
         return 1;
     }
 }

@@ -22,6 +22,10 @@ public:
     int warteAufBTN();
     void displayNachricht(const String zeile1, const String zeile2);
     void lowPowerModus();
+    bool besterWert(int neuerWert);
+    bool speichern(int besterwert);
+    int Lesen();
+    bool loeschen();
 };
 
 #endif
