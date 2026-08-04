@@ -55,9 +55,7 @@ int Reactionstester::ReaktionstestVorbereiten() // Bereitet den Reactionstest vo
     this->lcd.backlight();
     this->displayNachricht("Reactionstest", "Starten!");
     digitalWrite(this->ledPin1, LOW);
-
     this->lowPowerModus();
-
     if (warteAufBTN() == 1)
         return 1;
 }
@@ -65,19 +63,14 @@ int Reactionstester::ReaktionstestVorbereiten() // Bereitet den Reactionstest vo
 
 int Reactionstester::Reaktionstest()
 {
-    // Zeigt auf dem Display die Eingabe an
     this->displayNachricht("                ", "                ");
-
-    // Wartet zwischen 1 bis 5 Sekunden bis der Test startet
     delay(random(1000, 5000));
 
-    // startzeit wird ermittelt, lampe und Display werden angesteuert
     digitalWrite(this->ledPin1, HIGH);
     this->zeit = millis();
     this->displayNachricht("Jetzt!!!        ", "                ");
     if (warteAufBTN() == 1)
     {
-        // endzeit wird gemessen und von der startzeit abgezoggen, lampe wird ausgeschaltet und Display wird aktualisiert
         this->reactionszeit = millis();
         digitalWrite(this->ledPin1, LOW);
         this->displayNachricht(String(reactionszeit - zeit) + " ms", "                ");
