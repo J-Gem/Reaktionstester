@@ -1,14 +1,13 @@
-#ifndef Reactionstester_h
-#define Reactionstester_h
+#ifndef Reaktionstester_h
+#define Reaktionstester_h
 #include <Arduino.h>
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
-class Reactionstester
+class Reaktionstester
 {
 private:
     int ledPin1;
-    int ledPin2;
     int btnPin1;
     int btnPin2;
     unsigned long zeit;
@@ -16,7 +15,7 @@ private:
     LiquidCrystal_I2C lcd;
 
 public:
-    Reactionstester(int ledPin1, int ledPin2, int btn1, int btn2);
+    Reaktionstester(int ledPin1, int btn1, int btn2);
     int ReaktionstestVorbereiten();
     int Reaktionstest();
     int warteAufBTN();

@@ -1,19 +1,17 @@
 #include <Arduino.h>
-#include "Reactionstester.h"
+#include "Reaktionstester.h"
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 #include <LowPower.h>
 #include <EEPROM.h>
 
-Reactionstester::Reactionstester(int ledPin1, int ledPin2, int btnPin1, int btnPin2) // Konstruktor
+Reaktionstester::Reaktionstester(int ledPin1, int btnPin1, int btnPin2) // Konstruktor
     : ledPin1(ledPin1),
-      ledPin2(ledPin2),
       btnPin1(btnPin1),
       btnPin2(btnPin2),
       lcd(0x27, 16, 2)
 {
     pinMode(this->ledPin1, OUTPUT);
-    pinMode(this->ledPin2, OUTPUT);
     pinMode(this->btnPin1, INPUT);
     pinMode(this->btnPin2, INPUT);
 }
@@ -22,7 +20,7 @@ void wakeUp()
 {
 }
 
-int Reactionstester::warteAufBTN()
+int Reaktionstester::warteAufBTN()
 {
     while (digitalRead(this->btnPin1) != LOW && digitalRead(this->btnPin2) != LOW)
     {
@@ -33,7 +31,7 @@ int Reactionstester::warteAufBTN()
         return 2;
 }
 
-void Reactionstester::displayNachricht(const String zeile1, const String zeile2)
+void Reaktionstester::displayNachricht(const String zeile1, const String zeile2)
 {
     this->lcd.clear();
     this->lcd.setCursor(0, 0);
@@ -42,7 +40,7 @@ void Reactionstester::displayNachricht(const String zeile1, const String zeile2)
     this->lcd.print(zeile2);
 }
 
-void Reactionstester::lowPowerModus()
+void Reaktionstester::lowPowerModus()
 {
     attachInterrupt(digitalPinToInterrupt(this->btnPin1), wakeUp, LOW);
     attachInterrupt(digitalPinToInterrupt(this->btnPin2), wakeUp, LOW);
@@ -51,20 +49,20 @@ void Reactionstester::lowPowerModus()
     detachInterrupt(digitalPinToInterrupt(this->btnPin2));
 }
 
-bool Reactionstester::speichern(int besterwert)
+bool Reaktionstester::speichern(int besterwert)
 {
     EEPROM.put(0, besterwert);
     return true;
 }
 
-int Reactionstester::Lesen()
+int Reaktionstester::Lesen()
 {
     int besterwert = 0;
     EEPROM.get(0, besterwert);
     return besterwert;
 }
 
-bool Reactionstester::besterWert(int neuerWert)
+bool Reaktionstester::besterWert(int neuerWert)
 {
     int besterwert = 0;
     EEPROM.get(0, besterwert);
@@ -78,12 +76,12 @@ bool Reactionstester::besterWert(int neuerWert)
     }
 }
 
-bool Reactionstester::loeschen()
+bool Reaktionstester::loeschen()
 {
     this->speichern(0);
 }
 
-bool Reactionstester::wartezeit(int wartezeit)
+bool Reaktionstester::wartezeit(int wartezeit)
 {
     delay(500);
     unsigned long startZeit = millis();
@@ -97,14 +95,14 @@ bool Reactionstester::wartezeit(int wartezeit)
     return false;
 }
 
-void Reactionstester::fehlversuch()
+void Reaktionstester::fehlversuch()
 {
     this->displayNachricht("Fehlversuch   ", "                ");
     delay(1500);
     // this->ReaktionstestVorbereiten();
 }
 
-int Reactionstester::ReaktionstestVorbereiten() // Bereitet den Reactionstest vor und wartert anschließend im LowPower Modus auf eine eingabe
+int Reaktionstester::ReaktionstestVorbereiten() // Bereitet den Reactionstest vor und wartert anschließend im LowPower Modus auf eine eingabe
 {
     this->lcd.init();
     this->lcd.backlight();
@@ -128,7 +126,7 @@ int Reactionstester::ReaktionstestVorbereiten() // Bereitet den Reactionstest vo
     }
 }
 
-int Reactionstester::Reaktionstest() // Wartet eine zufällige Zeit und startet dann Reaktionstest, nach btn druck wird reaktionszeit gemessen
+int Reaktionstester::Reaktionstest() // Wartet eine zufällige Zeit und startet dann Reaktionstest, nach btn druck wird reaktionszeit gemessen
 {
     this->displayNachricht("                ", "                ");
     if (this->wartezeit(random(1000, 5000)))
