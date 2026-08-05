@@ -26,6 +26,8 @@ public:
     bool speichern(int besterwert);
     int Lesen();
     bool loeschen();
+    bool wartezeit(int wartezeit);
+    void fehlversuch();
 };
 
 #endif

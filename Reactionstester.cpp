@@ -83,6 +83,27 @@ bool Reactionstester::loeschen()
     this->speichern(0);
 }
 
+bool Reactionstester::wartezeit(int wartezeit)
+{
+    delay(500);
+    unsigned long startZeit = millis();
+    while (millis() - startZeit < wartezeit)
+    {
+        if (digitalRead(this->btnPin1) == LOW)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+void Reactionstester::fehlversuch()
+{
+    this->displayNachricht("Fehlversuch   ", "                ");
+    delay(1500);
+    // this->ReaktionstestVorbereiten();
+}
+
 int Reactionstester::ReaktionstestVorbereiten() // Bereitet den Reactionstest vor und wartert anschließend im LowPower Modus auf eine eingabe
 {
     this->lcd.init();
@@ -110,7 +131,11 @@ int Reactionstester::ReaktionstestVorbereiten() // Bereitet den Reactionstest vo
 int Reactionstester::Reaktionstest() // Wartet eine zufällige Zeit und startet dann Reaktionstest, nach btn druck wird reaktionszeit gemessen
 {
     this->displayNachricht("                ", "                ");
-    delay(random(1000, 5000));
+    if (this->wartezeit(random(1000, 5000)))
+    {
+        this->fehlversuch();
+        return 0;
+    }
 
     digitalWrite(this->ledPin1, HIGH);
     this->zeit = millis();
