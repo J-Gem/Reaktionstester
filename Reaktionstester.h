@@ -7,7 +7,9 @@
 class Reaktionstester
 {
 private:
-    int ledPin1;
+    int ledPinB;
+    int ledPinG;
+    int ledPinR;
     int btnPin1;
     int btnPin2;
     unsigned long zeit;
@@ -15,7 +17,7 @@ private:
     LiquidCrystal_I2C lcd;
 
 public:
-    Reaktionstester(int ledPin1, int btn1, int btn2);
+    Reaktionstester(int ledPinB, int ledPinG, int ledPinR, int btn1, int btn2);
     int ReaktionstestVorbereiten();
     int Reaktionstest();
     int warteAufBTN();
@@ -27,6 +29,7 @@ public:
     bool loeschen();
     bool wartezeit(int wartezeit);
     void fehlversuch();
+    bool ledSpiel();
 };
 
 #endif

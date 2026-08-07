@@ -5,13 +5,17 @@
 #include <LowPower.h>
 #include <EEPROM.h>
 
-Reaktionstester::Reaktionstester(int ledPin1, int btnPin1, int btnPin2) // Konstruktor
-    : ledPin1(ledPin1),
+Reaktionstester::Reaktionstester(int ledPinB, int ledPinG, int ledPinR, int btnPin1, int btnPin2) // Konstruktor
+    : ledPinB(ledPinB),
+      ledPinG(ledPinG),
+      ledPinR(ledPinR),
       btnPin1(btnPin1),
       btnPin2(btnPin2),
       lcd(0x27, 16, 2)
 {
-    pinMode(this->ledPin1, OUTPUT);
+    pinMode(this->ledPinB, OUTPUT);
+    pinMode(this->ledPinG, OUTPUT);
+    pinMode(this->ledPinR, OUTPUT);
     pinMode(this->btnPin1, INPUT);
     pinMode(this->btnPin2, INPUT);
 }
@@ -102,12 +106,36 @@ void Reaktionstester::fehlversuch()
     // this->ReaktionstestVorbereiten();
 }
 
+bool Reaktionstester::ledSpiel()
+{
+    long warteZeit = millis();
+    digitalWrite(this->ledPinR, HIGH);
+    while (digitalRead(this->btnPin1) != LOW)
+    {
+        if ((millis() - warteZeit) > 600 && (millis() - warteZeit) < 1200)
+        {
+            digitalWrite(this->ledPinR, LOW);
+            digitalWrite(this->ledPinB, HIGH);
+        }
+        else if ((millis() - warteZeit) > 1200)
+        {
+            digitalWrite(this->ledPinB, LOW);
+            digitalWrite(this->ledPinG, HIGH);
+            return false;
+        }
+    }
+    digitalWrite(this->ledPinB, LOW);
+    digitalWrite(this->ledPinG, LOW);
+    digitalWrite(this->ledPinR, LOW);
+    return true;
+}
+
 int Reaktionstester::ReaktionstestVorbereiten() // Bereitet den Reactionstest vor und wartert anschließend im LowPower Modus auf eine eingabe
 {
     this->lcd.init();
     this->lcd.backlight();
     this->displayNachricht("Reactionstest", "Starten!");
-    digitalWrite(this->ledPin1, LOW);
+    digitalWrite(this->ledPinG, LOW);
     this->lowPowerModus();
     switch (warteAufBTN())
     {
@@ -129,19 +157,23 @@ int Reaktionstester::ReaktionstestVorbereiten() // Bereitet den Reactionstest vo
 int Reaktionstester::Reaktionstest() // Wartet eine zufällige Zeit und startet dann Reaktionstest, nach btn druck wird reaktionszeit gemessen
 {
     this->displayNachricht("                ", "                ");
-    if (this->wartezeit(random(1000, 5000)))
+    if (this->wartezeit(random(800, 3800)))
     {
         this->fehlversuch();
         return 0;
     }
 
-    digitalWrite(this->ledPin1, HIGH);
+    if (this->ledSpiel())
+    {
+        this->fehlversuch();
+        return 0;
+    }
     this->zeit = millis();
     this->displayNachricht("Jetzt!!!        ", "                ");
     if (warteAufBTN() == 1)
     {
         this->reactionszeit = millis();
-        digitalWrite(this->ledPin1, LOW);
+        digitalWrite(this->ledPinG, LOW);
         this->displayNachricht(String(reactionszeit - zeit) + " ms", "                ");
         if (this->besterWert(reactionszeit - zeit) == true)
         {
